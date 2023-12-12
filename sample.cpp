@@ -179,7 +179,8 @@ int main( int argc, char* args[] )
 		printf( "Failed to initialize!\n" );
 	}
 	else
-	{
+	{	
+		printf("Success to initialize!\n");
 		//Load media
 		if( !loadMedia() )
 		{
@@ -194,11 +195,6 @@ int main( int argc, char* args[] )
 			SDL_Event e;
 			
 			Foo foo;
-			SDL_Rect pipe_collider;
-			pipe_collider.x = 240;
-			pipe_collider.y = 170;
-			pipe_collider.w = 100;
-			pipe_collider.h = 120;
 			//While application is running
 			while( !quit )
 			{	
@@ -212,7 +208,8 @@ int main( int argc, char* args[] )
 					}
 					foo.handleEvent(e);
 				}
-				foo.move(pipe_collider);
+				foo.move();
+				
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
