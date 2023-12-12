@@ -10,7 +10,7 @@ extern const int SCREEN_HEIGHT;
 class Foo
 {
     public:
-		static const int FOO_WIDTH = 150;
+		static const int FOO_WIDTH = 75;
 		static const int FOO_HEIGHT = 20;
 
 		//Maximum axis velocity of the dot
@@ -23,10 +23,11 @@ class Foo
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot
-		void move(SDL_Rect& wall);
+		void move();
 
 		//Shows the dot on the screen
 		void render();
+		
 
     private:
 		//The X and Y offsets of the dot
