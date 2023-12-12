@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string>
 #include "Foo.h"
-
+#define g 1;
 Foo::Foo()
 {
     //Initialize the offsets
@@ -46,7 +46,7 @@ void Foo::move()
 {
     //Move the dot left or right
     mPosX += mVelX;
-    mPosY -= mVelY-1;
+    mPosY -= mVelY-g;
 	mCollider.x = mPosX;
 	mCollider.y = mPosY;
 
@@ -72,4 +72,3 @@ void Foo::render()
     //Show the dot
 	gFooTexture.render( mPosX, mPosY );
 }
-
