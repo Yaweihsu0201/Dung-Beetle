@@ -27,7 +27,10 @@ void Foo::handleEvent( SDL_Event& e )
         {
             case SDLK_LEFT: mVelX -= FOO_VEL; break;
             case SDLK_RIGHT: mVelX += FOO_VEL; break;
-            case SDLK_UP: mVelY += 3; break;
+            
+            	case SDLK_UP: mVelY += 2; break;
+    			
+			
         }
     }
     //If a key was released
@@ -38,7 +41,7 @@ void Foo::handleEvent( SDL_Event& e )
         {
             case SDLK_LEFT: mVelX += FOO_VEL; break;
             case SDLK_RIGHT: mVelX -= FOO_VEL; break;
-            case SDLK_UP: mVelY -= 3; break;
+            case SDLK_UP: mVelY -= 2; break;
         }
     }
 }
@@ -62,6 +65,10 @@ void Foo::move()
     	mPosY += mVelY-1;
 	}
 	
+	//if ( mPosY<400){
+	//	mVelY-=1;
+		
+
 	
 	mCollider.x = mPosX;
 	mCollider.y = mPosY;
@@ -72,3 +79,4 @@ void Foo::render()
     //Show the dot
 	gFooTexture.render( mPosX, mPosY );
 }
+
