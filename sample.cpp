@@ -1,13 +1,9 @@
-/*This source code copyrighted by Lazy Foo' Productions 2004-2023
-and may not be redistributed without written permission.*/
-
-//Using SDL, SDL_image, standard IO, and strings
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string>
-
-
+#include "Poop.h"
+#include "Bug2.h"
 #include "Foo.h"
 #include "LTexture.h"
 //Screen dimension constants
@@ -69,8 +65,8 @@ SDL_Renderer* gRenderer = NULL;
 //Scene textures
 LTexture gFooTexture;
 LTexture gBackgroundTexture;
-LTexture gPipe;
-
+LTexture gPoop;
+LTexture gBug2;
 
 bool init()
 {
@@ -138,7 +134,7 @@ bool loadMedia()
 		success = false;
 	}
 	//Load pipe
-	if( !gPipe.loadFromFile( "img/poop.png" ) )
+	if( !gPoop.loadFromFile( "img/poop.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
@@ -150,6 +146,12 @@ bool loadMedia()
 		printf( "Failed to load background texture image!\n" );
 		success = false;
 	}
+	
+	if( !gBug2.loadFromFile( "img/bug3.png" ) )
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
 
 	return success;
 }
@@ -159,6 +161,8 @@ void close()
 	//Free loaded images
 	gFooTexture.free();
 	gBackgroundTexture.free();
+	gBug2.free();
+	gPoop.free();
 
 	//Destroy window	
 	SDL_DestroyRenderer( gRenderer );
@@ -195,6 +199,8 @@ int main( int argc, char* args[] )
 			SDL_Event e;
 			
 			Foo foo;
+			Bug2 bug2;
+			Poop poop;
 			//While application is running
 			while( !quit )
 			{	
@@ -207,9 +213,12 @@ int main( int argc, char* args[] )
 						quit = true;
 					}
 					foo.handleEvent(e);
+					bug2.handleEvent(e);
+					
 				}
 				foo.move();
-				
+				bug2.move();
+				poop.move();
 				//Clear screen
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
@@ -217,12 +226,13 @@ int main( int argc, char* args[] )
 				//Render background texture to screen
 				
 				gBackgroundTexture.render( 0, 0 );
-				gPipe.render(240,170); 
+				gPoop.render(240,170); 
 				//Render Foo' to the screen
 				foo.render();
-
+				bug2.render();
 				//Update screen
 				SDL_RenderPresent( gRenderer );
+				SDL_Delay(2);
 			}
 		}
 	}
