@@ -67,6 +67,7 @@ LTexture gFooTexture;
 LTexture gBackgroundTexture;
 LTexture gPoop;
 LTexture gBug2;
+LTexture poop_bug;
 
 bool init()
 {
@@ -152,7 +153,13 @@ bool loadMedia()
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
-
+	
+	if (!poop_bug.loadFromFile("img/poop_bug.png"))
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
+	
 	return success;
 }
 
@@ -163,6 +170,7 @@ void close()
 	gBackgroundTexture.free();
 	gBug2.free();
 	gPoop.free();
+	poop_bug.free();
 
 	//Destroy window	
 	SDL_DestroyRenderer( gRenderer );
@@ -216,7 +224,7 @@ int main( int argc, char* args[] )
 					bug2.handleEvent(e);
 					
 				}
-				foo.move();
+				foo.move(poop.PoopCollider());
 				bug2.move();
 				poop.move();
 				//Clear screen
