@@ -68,6 +68,7 @@ LTexture gBackgroundTexture;
 LTexture gPoop;
 LTexture gBug2;
 LTexture poop_bug;
+LTexture bug_poop;
 
 bool init()
 {
@@ -81,14 +82,12 @@ bool init()
 		success = false;
 	}
 	else
-	{
-		//Set texture filtering to linear
+
 		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
 		{
 			printf( "Warning: Linear texture filtering not enabled!" );
 		}
 
-		//Create window
 		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
 		if( gWindow == NULL )
 		{
@@ -97,7 +96,7 @@ bool init()
 		}
 		else
 		{
-			//Create renderer for window
+
 			gRenderer = SDL_CreateRenderer( gWindow, -1, SDL_RENDERER_ACCELERATED );
 			if( gRenderer == NULL )
 			{
@@ -106,10 +105,10 @@ bool init()
 			}
 			else
 			{
-				//Initialize renderer color
+
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 
-				//Initialize PNG loading
+	
 				int imgFlags = IMG_INIT_PNG;
 				if( !( IMG_Init( imgFlags ) & imgFlags ) )
 				{
@@ -125,23 +124,20 @@ bool init()
 
 bool loadMedia()
 {
-	//Loading success flag
+
 	bool success = true;
 
-	//Load Foo' texture
 	if( !gFooTexture.loadFromFile( "img/bug2.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
-	//Load pipe
 	if( !gPoop.loadFromFile( "img/poop.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
 	
-	//Load background texture
 	if( !gBackgroundTexture.loadFromFile( "img/background.png" ) )
 	{
 		printf( "Failed to load background texture image!\n" );
@@ -153,8 +149,14 @@ bool loadMedia()
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
-	
+	//!
 	if (!poop_bug.loadFromFile("img/poop_bug.png"))
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
+	//!
+	if (!bug_poop.loadFromFile("img/bug_poop.png"))
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
@@ -225,9 +227,13 @@ int main( int argc, char* args[] )
 					
 				}
 				foo.move(poop.PoopCollider());
-				bug2.move();
+				bug2.move(poop.PoopCollider());
 				poop.move();
-				//Clear screen
+				//!
+				if (bug2.isWithPoop() || foo.isWithPoop()) {
+					poop.discard();
+				}
+			
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
 
