@@ -4,6 +4,7 @@
 #include "LTexture.h"
 
 extern LTexture gFooTexture;
+extern LTexture poop_bug;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
@@ -23,7 +24,7 @@ class Foo
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot
-		void move();
+		void move(const SDL_Rect&);
 
 		//Shows the dot on the screen
 		void render();
@@ -32,7 +33,7 @@ class Foo
     private:
 		//The X and Y offsets of the dot
 		int mPosX, mPosY;
-
+		bool withPoop;
 		//The velocity of the dot
 		int mVelX, mVelY;
 		SDL_Rect mCollider;
