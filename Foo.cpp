@@ -9,7 +9,7 @@ Foo::Foo()
     //Initialize the offsets
     mPosX = SCREEN_WIDTH - 100;
     mPosY = 400;
-	
+	withPoop = false;
 	mCollider.w = FOO_WIDTH;
 	mCollider.h = FOO_HEIGHT;
     //Initialize the velocity
@@ -45,13 +45,11 @@ void Foo::handleEvent( SDL_Event& e )
         }
     }
 }
-void Foo::move()
+void Foo::move(const SDL_Rect& R)
 {
     //Move the dot left or right
     mPosX += mVelX;
     mPosY -= mVelY-g;
-	mCollider.x = mPosX;
-	mCollider.y = mPosY;
 
     //If the dot went too far to the left or right
     
@@ -64,11 +62,11 @@ void Foo::move()
     if ( mPosY > 400) {
     	mPosY += mVelY-1;
 	}
-	
-	//if ( mPosY<400){
-	//	mVelY-=1;
 		
-
+	if (SDL_HasIntersection(&R,&mCollider)) {
+		withPoop = true;
+		printf("collide!!\n");
+	}
 	
 	mCollider.x = mPosX;
 	mCollider.y = mPosY;
@@ -77,6 +75,10 @@ void Foo::move()
 void Foo::render()
 {
     //Show the dot
-	gFooTexture.render( mPosX, mPosY );
+	if (withPoop) {
+		poop_bug.render( mPosX, mPosY );
+	} else {
+		gFooTexture.render( mPosX, mPosY );
+	}
 }
 
