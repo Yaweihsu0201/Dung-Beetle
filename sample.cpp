@@ -225,11 +225,11 @@ int main( int argc, char* args[] )
 
 				//Render background texture to screen
 				
-				gBackgroundTexture.render( 0, 0 );
-				gPoop.render(240,170); 
+				gBackgroundTexture.render( 0, 0 ); 
 				//Render Foo' to the screen
 				foo.render();
 				bug2.render();
+				poop.render();
 				//Update screen
 				SDL_RenderPresent( gRenderer );
 				SDL_Delay(2);
