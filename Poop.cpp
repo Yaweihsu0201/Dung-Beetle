@@ -22,9 +22,6 @@ void Poop::move()
     //Move the dot left or right
     mPosX += mVelX;
     mPosY += mVelY+g;
-	mCollider.x = mPosX;
-	mCollider.y = mPosY;
-
     //If the dot went too far to the left or right
     
     if( ( mPosX < 0 ) || ( mPosX + POOP_WIDTH > SCREEN_WIDTH ) )
@@ -49,3 +46,6 @@ void Poop::render()
 	gPoop.render( mPosX, mPosY );
 }
 
+SDL_Rect Poop::PoopCollider() {
+	return mCollider;
+}
