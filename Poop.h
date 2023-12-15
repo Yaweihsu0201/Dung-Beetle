@@ -25,6 +25,8 @@ class Poop
 		//Shows the dot on the screen
 		void render();
 		
+		SDL_Rect PoopCollider();
+		
 
     private:
 		//The X and Y offsets of the dot
