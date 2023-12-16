@@ -42,7 +42,7 @@ class Foo
 		bool press_attack;
 		bool hit;
 		bool loss;
-		bool stopaccel;
+		int jump_times;
 		bool conter_attack;
 		//The velocity of the dot
 		int mVelX, mVelY;
