@@ -1,3 +1,5 @@
+#include <SDL.h>
+#include <SDL_image.h>
 #include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
@@ -140,7 +142,7 @@ bool loadMedia()
 		success = false;
 	}
 	
-	if( !gBackgroundTexture.loadFromFile( "img/background.png" ) )
+	if( !gBackgroundTexture.loadFromFile( "img/desert.png" ) )
 	{
 		printf( "Failed to load background texture image!\n" );
 		success = false;
