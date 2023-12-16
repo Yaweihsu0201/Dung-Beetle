@@ -15,7 +15,7 @@ Bug2::Bug2()
 	//MODIFIED below: 
 	press_attack = false;
 	hit = false;
-	stopaccel = false;
+	jumptimes = 0;
 	conter_attack = false;
 	loss = false;
     //Initialize the velocity
@@ -33,7 +33,7 @@ void Bug2::handleEvent( SDL_Event& e )
         {
             case SDLK_a: mVelX -= BUG2_VEL;direction = false;break;
             case SDLK_d: mVelX += BUG2_VEL;direction = true ;break;
-            case SDLK_w: mVelY += 2;stopaccel = true;break;
+            case SDLK_w: mVelY += 3;jumptimes++;break;
 			case SDLK_j: 
 				if(!withPoop){
 					press_attack=true;
@@ -71,18 +71,22 @@ void Bug2::move(const SDL_Rect& R, const SDL_Rect& Bug2)
       //MODIFIED below: 增加重力變數以及跳躍落下的判定 
 	int g=0;
    
-    if(mPosY<400&& !stopaccel){
-    	g=2;
+    if(mPosY<400&& jumptimes==0){
+    	g=3;
 	}
-	if(mPosY<300&& stopaccel){
-    	mVelY-=2;
-    	stopaccel=false;
+	if(mPosY<300&& jumptimes!=0){
+    	mVelY-=3;
+    	jumptimes--;
 	}
 	//MODIFIED above
 	
 	
 	//Move the dot left or right
-    mPosX += mVelX;
+    int newmVelX= mVelX;
+	if (withPoop) {
+    	newmVelX = mVelX/2;
+	}
+	mPosX += newmVelX;
     mPosY -= mVelY-g;
 
     //If the dot went too far to the left or right
