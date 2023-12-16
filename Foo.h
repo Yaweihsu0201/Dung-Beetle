@@ -2,9 +2,10 @@
 #define FOO_H
 
 #include "LTexture.h"
-
 extern LTexture gFooTexture;
 extern LTexture poop_bug;
+extern LTexture gBug2;
+extern LTexture bug_poop;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
@@ -15,7 +16,7 @@ class Foo
 		static const int FOO_HEIGHT = 20;
 
 		//Maximum axis velocity of the dot
-		static const int FOO_VEL = 1;
+		static const int FOO_VEL = 4;
 
 		//Initializes the variables
 		Foo();
@@ -24,16 +25,25 @@ class Foo
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot
-		void move(const SDL_Rect&);
+		void move(const SDL_Rect& , const SDL_Rect& );
 
 		//Shows the dot on the screen
-		void render();
+		void render(bool othergotp);
 		
+		bool gotp();
+		
+		SDL_Rect Collider();
 
     private:
 		//The X and Y offsets of the dot
 		int mPosX, mPosY;
 		bool withPoop;
+		bool direction;	
+		bool press_attack;
+		bool hit;
+		bool loss;
+		bool stopaccel;
+		bool conter_attack;
 		//The velocity of the dot
 		int mVelX, mVelY;
 		SDL_Rect mCollider;
