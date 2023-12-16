@@ -1,7 +1,7 @@
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <stdio.h>
 #include <string>
+#include <sstream>
 #include "Poop.h"
 #include "Bug2.h"
 #include "Foo.h"
@@ -62,6 +62,7 @@ SDL_Window* gWindow = NULL;
 //The window renderer
 SDL_Renderer* gRenderer = NULL;
 
+
 //Scene textures
 LTexture gFooTexture;
 LTexture gBackgroundTexture;
@@ -69,6 +70,7 @@ LTexture gPoop;
 LTexture gBug2;
 LTexture poop_bug;
 LTexture bug_poop;
+
 
 bool init()
 {
@@ -81,8 +83,8 @@ bool init()
 		printf( "SDL could not initialize! SDL Error: %s\n", SDL_GetError() );
 		success = false;
 	}
-	else
-
+	else {
+	
 		if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
 		{
 			printf( "Warning: Linear texture filtering not enabled!" );
@@ -162,6 +164,7 @@ bool loadMedia()
 		success = false;
 	}
 	
+    
 	return success;
 }
 
@@ -173,7 +176,9 @@ void close()
 	gBug2.free();
 	gPoop.free();
 	poop_bug.free();
-
+	
+    
+    
 	//Destroy window	
 	SDL_DestroyRenderer( gRenderer );
 	SDL_DestroyWindow( gWindow );
@@ -204,10 +209,13 @@ int main( int argc, char* args[] )
 		{	
 			//Main loop flag
 			bool quit = false;
-
+			
 			//Event handler
 			SDL_Event e;
 			
+			SDL_Color textColor = { 255, 255, 255, 255 };
+			std::stringstream ScoreAText;
+			std::stringstream ScoreBText;
 			Foo foo;
 			Bug2 bug2;
 			Poop poop;
@@ -221,32 +229,35 @@ int main( int argc, char* args[] )
 					if( e.type == SDL_QUIT )
 					{
 						quit = true;
-					}
+					} 
+               	
 					foo.handleEvent(e);
 					bug2.handleEvent(e);
 					
 				}
-				foo.move(poop.PoopCollider());
-				bug2.move(poop.PoopCollider());
+				bool bug2p = bug2.gotp();
+				bool foop = foo.gotp();
+				foo.move(poop.PoopCollider(), bug2.Collider());
+				bug2.move(poop.PoopCollider(), foo.Collider());
 				poop.move();
 				//!
-				if (bug2.isWithPoop() || foo.isWithPoop()) {
+				if (bug2.gotp() || foo.gotp()) {
 					poop.discard();
 				}
 			
 				SDL_SetRenderDrawColor( gRenderer, 0xFF, 0xFF, 0xFF, 0xFF );
 				SDL_RenderClear( gRenderer );
-
 				//Render background texture to screen
 				
 				gBackgroundTexture.render( 0, 0 ); 
 				//Render Foo' to the screen
-				foo.render();
-				bug2.render();
+				foo.render(bug2p);
+				bug2.render(foop);
 				poop.render();
+				//Render textures
 				//Update screen
 				SDL_RenderPresent( gRenderer );
-				SDL_Delay(2);
+				SDL_Delay(10);
 			}
 		}
 	}
