@@ -14,7 +14,7 @@ Foo::Foo()
 	direction = false;
 	press_attack = false;
 	hit = false;
-	stopaccel = false;
+	jump_times = 0;
 	conter_attack = false;
 	mCollider.w = FOO_WIDTH;
 	mCollider.h = FOO_HEIGHT;
@@ -35,7 +35,7 @@ void Foo::handleEvent( SDL_Event& e )
             case SDLK_RIGHT: mVelX += FOO_VEL;direction = true; break;
             	//MODIFIED below: 改動跳躍數值以及跳躍判定 
 			
-			case SDLK_UP:mVelY += 2;stopaccel = true;break;
+			case SDLK_UP:mVelY += 3;jump_times++;break;
 			case SDLK_SPACE: 
 				if(!withPoop){
 					press_attack=true;
@@ -81,18 +81,24 @@ void Foo::move(const SDL_Rect& R, const SDL_Rect& Bug2)
       //MODIFIED below: 增加重力變數以及跳躍落下的判定 
 	int g=0;
    
-    if(mPosY<400&& !stopaccel){
-    	g=2;
+    if(mPosY<400&& jump_times==0){
+    	g=3;
 	}
-	if(mPosY<300&& stopaccel){
-    	mVelY-=2;
-    	stopaccel=false;
+	if(mPosY<300&& jump_times!=0){
+    	mVelY-=3;
+    	jump_times--;
 	}
 	//MODIFIED above
 	
 	
 	//Move the dot left or right
-    mPosX += mVelX;
+    int newmVelX= mVelX;
+	if (withPoop) {
+    	newmVelX = mVelX/2;
+	}
+	mPosX += newmVelX;
+    
+    
     mPosY -= mVelY-g;
 
     //If the dot went too far to the left or right
