@@ -3,15 +3,21 @@
 #include <stdio.h>
 #include <string>
 #include "Bug2.h"
-#define g 1;
 Bug2::Bug2()
 {
     //Initialize the offsets
     mPosX = 100;
     mPosY = 400;
-	
+	withPoop = false;
+	direction = true;
 	mCollider.w = BUG2_WIDTH;
 	mCollider.h = BUG2_HEIGHT;
+	//MODIFIED below: 
+	press_attack = false;
+	hit = false;
+	stopaccel = false;
+	conter_attack = false;
+	loss = false;
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
@@ -25,9 +31,26 @@ void Bug2::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_a: mVelX -= BUG2_VEL; break;
-            case SDLK_d: mVelX += BUG2_VEL; break;
-            case SDLK_w: mVelY += 2; break;
+            case SDLK_a: mVelX -= BUG2_VEL;direction = false;break;
+            case SDLK_d: mVelX += BUG2_VEL;direction = true ;break;
+            case SDLK_w: mVelY += 2;stopaccel = true;break;
+			case SDLK_j: 
+				if(!withPoop){
+					press_attack=true;
+				} 
+				else{
+					press_attack=false;
+				}
+				break;
+			case SDLK_SPACE: 
+				if(withPoop){
+					conter_attack=true;
+				}
+				else
+					conter_attack=false;
+				break;
+
+            
         }
     }
     //If a key was released
@@ -38,17 +61,29 @@ void Bug2::handleEvent( SDL_Event& e )
         {
             case SDLK_a: mVelX += BUG2_VEL; break;
             case SDLK_d: mVelX -= BUG2_VEL; break;
-            case SDLK_w: mVelY -= 2; break;
+            case SDLK_j: press_attack=false; break;
+			case SDLK_SPACE: conter_attack=false; break;
         }
     }
 }
-void Bug2::move()
+void Bug2::move(const SDL_Rect& R, const SDL_Rect& Bug2)
 {
-    //Move the dot left or right
+      //MODIFIED below: 增加重力變數以及跳躍落下的判定 
+	int g=0;
+   
+    if(mPosY<400&& !stopaccel){
+    	g=2;
+	}
+	if(mPosY<300&& stopaccel){
+    	mVelY-=2;
+    	stopaccel=false;
+	}
+	//MODIFIED above
+	
+	
+	//Move the dot left or right
     mPosX += mVelX;
     mPosY -= mVelY-g;
-	mCollider.x = mPosX;
-	mCollider.y = mPosY;
 
     //If the dot went too far to the left or right
     
@@ -61,15 +96,64 @@ void Bug2::move()
     if ( mPosY > 400) {
     	mPosY += mVelY-1;
 	}
+		
+	if (SDL_HasIntersection(&R,&mCollider)) {
+		withPoop = true;
 	
-	
+	}
+	if (SDL_HasIntersection(&Bug2,&mCollider)&&press_attack) {
+		hit = true;
+	}
+	if (SDL_HasIntersection(&Bug2,&mCollider)&&conter_attack) {
+		loss = true;
+	}
 	mCollider.x = mPosX;
 	mCollider.y = mPosY;
 }
 
-void Bug2::render()
+void Bug2::render(bool othergotp)
 {
     //Show the dot
-	gBug2.render( mPosX, mPosY );
+	if (withPoop) {
+		if(loss){
+			withPoop=false;			
+			hit = false;
+			conter_attack = false;
+			press_attack = false;
+			loss=false;
+		}
+	
+		if (direction) {
+			bug_poop.render( mPosX, mPosY );
+		} else {
+			poop_bug.render( mPosX, mPosY );
+		}
+
+	
+	} 
+	else {
+		if (hit) {
+			if(othergotp){ 
+				withPoop = true;
+			} 
+			conter_attack = false;
+			hit = false;
+			loss=false;
+			press_attack = false;
+		}
+		if (direction) {
+			gBug2.render( mPosX, mPosY );
+		} else {
+			gFooTexture.render( mPosX, mPosY );
+		}	
+	}
+
 }
 
+SDL_Rect Bug2::Collider() {
+	return mCollider;
+}
+
+bool Bug2::gotp() {
+	return withPoop;
+}
