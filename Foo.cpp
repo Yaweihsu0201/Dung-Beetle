@@ -2,21 +2,27 @@
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string>
+#include <SDL_ttf.h>
 #include "Foo.h"
-#define g 1;
+
 Foo::Foo()
 {
     //Initialize the offsets
     mPosX = SCREEN_WIDTH - 100;
     mPosY = 400;
 	withPoop = false;
+	direction = false;
+	press_attack = false;
+	hit = false;
+	stopaccel = false;
+	conter_attack = false;
 	mCollider.w = FOO_WIDTH;
 	mCollider.h = FOO_HEIGHT;
+	
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
 }
-
 void Foo::handleEvent( SDL_Event& e )
 {
     //If a key was pressed
@@ -25,11 +31,28 @@ void Foo::handleEvent( SDL_Event& e )
         //Adjust the velocity
         switch( e.key.keysym.sym )
         {
-            case SDLK_LEFT: mVelX -= FOO_VEL; break;
-            case SDLK_RIGHT: mVelX += FOO_VEL; break;
-            
-            	case SDLK_UP: mVelY += 2; break;
-    			
+            case SDLK_LEFT: mVelX -= FOO_VEL;direction=false; break;
+            case SDLK_RIGHT: mVelX += FOO_VEL;direction = true; break;
+            	//MODIFIED below: 改動跳躍數值以及跳躍判定 
+			
+			case SDLK_UP:mVelY += 2;stopaccel = true;break;
+			case SDLK_SPACE: 
+				if(!withPoop){
+					press_attack=true;
+				} 
+				else{
+					press_attack=false;
+				}
+				break;
+			case SDLK_j:
+				if(withPoop){
+					conter_attack=true;
+				}
+				else
+					conter_attack=false;
+				break;
+		
+			//MODIFIED above
 			
         }
     }
@@ -41,13 +64,34 @@ void Foo::handleEvent( SDL_Event& e )
         {
             case SDLK_LEFT: mVelX += FOO_VEL; break;
             case SDLK_RIGHT: mVelX -= FOO_VEL; break;
-            case SDLK_UP: mVelY -= 2; break;
+            case SDLK_SPACE: 
+				press_attack=false; 
+				break;
+				
+			case SDLK_j: 
+				conter_attack=false;
+				break;
+
         }
     }
 }
-void Foo::move(const SDL_Rect& R)
+
+void Foo::move(const SDL_Rect& R, const SDL_Rect& Bug2)
 {
-    //Move the dot left or right
+      //MODIFIED below: 增加重力變數以及跳躍落下的判定 
+	int g=0;
+   
+    if(mPosY<400&& !stopaccel){
+    	g=2;
+	}
+	if(mPosY<300&& stopaccel){
+    	mVelY-=2;
+    	stopaccel=false;
+	}
+	//MODIFIED above
+	
+	
+	//Move the dot left or right
     mPosX += mVelX;
     mPosY -= mVelY-g;
 
@@ -65,20 +109,59 @@ void Foo::move(const SDL_Rect& R)
 		
 	if (SDL_HasIntersection(&R,&mCollider)) {
 		withPoop = true;
-		printf("collide!!\n");
+	}
+	if (SDL_HasIntersection(&Bug2,&mCollider)&&press_attack) {
+		hit = true;
+	}
+	if (SDL_HasIntersection(&Bug2,&mCollider)&&conter_attack) {
+		loss = true;
 	}
 	
 	mCollider.x = mPosX;
 	mCollider.y = mPosY;
 }
 
-void Foo::render()
+void Foo::render(bool othergotp)
 {
     //Show the dot
+	
 	if (withPoop) {
-		poop_bug.render( mPosX, mPosY );
-	} else {
-		gFooTexture.render( mPosX, mPosY );
-	}
-}
+		if(loss){
+			withPoop=false;			
+			hit = false;
+			conter_attack = false;
+			press_attack = false;
+			loss=false;
+		}		
+			if (direction) {
+			bug_poop.render( mPosX, mPosY );
+		} else {
+			poop_bug.render( mPosX, mPosY );
+		}
 
+	
+	} 
+	else {
+		if (hit) {
+			if(othergotp){
+				withPoop = true;
+			} 
+			conter_attack = false;
+			hit = false;
+			press_attack = false;
+			loss=false;
+		}
+		if (direction) {
+			gBug2.render( mPosX, mPosY );
+		} else {
+			gFooTexture.render( mPosX, mPosY );
+		}
+	}
+
+}
+bool Foo::gotp() {
+	return withPoop;
+}
+SDL_Rect Foo::Collider() {
+	return mCollider;
+}
