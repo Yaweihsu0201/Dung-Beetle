@@ -2,12 +2,13 @@
 #include <SDL_image.h>
 #include <stdio.h>
 #include <string>
+#include <SDL_ttf.h>
 #include "Bug2.h"
 Bug2::Bug2()
 {
     //Initialize the offsets
-    mPosX = 100;
-    mPosY = 400;
+    mPosX = 0;
+    mPosY = 350;
 	withPoop = false;
 	direction = true;
 	mCollider.w = BUG2_WIDTH;
@@ -18,6 +19,7 @@ Bug2::Bug2()
 	jumptimes = 0;
 	conter_attack = false;
 	loss = false;
+	mScore =0;
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
@@ -66,15 +68,15 @@ void Bug2::handleEvent( SDL_Event& e )
         }
     }
 }
-void Bug2::move(const SDL_Rect& R, const SDL_Rect& Bug2)
+void Bug2::move(const SDL_Rect& R, const SDL_Rect& Bug2,int count)
 {
       //MODIFIED below: 增加重力變數以及跳躍落下的判定 
 	int g=0;
    
-    if(mPosY<400&& jumptimes==0){
+    if(mPosY<350&& jumptimes==0){
     	g=3;
 	}
-	if(mPosY<300&& jumptimes!=0){
+	if(mPosY<250&& jumptimes!=0){
     	mVelY-=3;
     	jumptimes--;
 	}
@@ -91,17 +93,24 @@ void Bug2::move(const SDL_Rect& R, const SDL_Rect& Bug2)
 
     //If the dot went too far to the left or right
     
-    if( ( mPosX < 0 ) || ( mPosX + BUG2_WIDTH > SCREEN_WIDTH ) )
+    if(mPosX + BUG2_WIDTH > SCREEN_WIDTH  )
     {
         //Move back
         mPosX -= mVelX;
-    } 
+    } else if ( mPosX < 0) {
+    	if (withPoop) {
+    		goal = true;
+    		withPoop = false;
+		} else {
+			mPosX -= mVelX;
+		}
+	}
     
-    if ( mPosY > 400) {
+    if ( mPosY > 350) {
     	mPosY += mVelY-1;
 	}
 		
-	if (SDL_HasIntersection(&R,&mCollider)) {
+	if (SDL_HasIntersection(&R,&mCollider) && count >= 10) {
 		withPoop = true;
 	
 	}
@@ -128,15 +137,15 @@ void Bug2::render(bool othergotp)
 		}
 	
 		if (direction) {
-			bug_poop.render( mPosX, mPosY );
+			gBug2rp.render( mPosX, mPosY );
 		} else {
-			poop_bug.render( mPosX, mPosY );
+			gBug2lp.render( mPosX, mPosY );
 		}
-
+		
 	
 	} 
 	else {
-		if (hit) {
+		if (hit){
 			if(othergotp){ 
 				withPoop = true;
 			} 
@@ -146,12 +155,12 @@ void Bug2::render(bool othergotp)
 			press_attack = false;
 		}
 		if (direction) {
-			gBug2.render( mPosX, mPosY );
+			gBug2r.render( mPosX, mPosY );
 		} else {
-			gFooTexture.render( mPosX, mPosY );
+			gBug2l.render( mPosX, mPosY );
 		}	
+		
 	}
-
 }
 
 SDL_Rect Bug2::Collider() {
@@ -160,4 +169,34 @@ SDL_Rect Bug2::Collider() {
 
 bool Bug2::gotp() {
 	return withPoop;
+}
+
+int Bug2::returnmScore() {
+	return mScore;
+}
+
+bool Bug2::resetgoal() {
+	bool currentgoal = goal;
+	goal = false;
+	return currentgoal;
+	
+}
+void Bug2::set() {
+	//Initialize the offsets
+    mPosX = 0;
+    mPosY = 350;
+	withPoop = false;
+	direction = true;
+	mCollider.w = BUG2_WIDTH;
+	mCollider.h = BUG2_HEIGHT;
+	//MODIFIED below: 
+	press_attack = false;
+	hit = false;
+	jumptimes = 0;
+	conter_attack = false;
+	loss = false;
+	mScore =0;
+    //Initialize the velocity
+    mVelX = 0;
+    mVelY = 0;
 }
