@@ -1,2 +1,2 @@
 # SDL-project
-bugs 
+you better not touch this shit
