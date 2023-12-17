@@ -31,6 +31,36 @@ public:
 	virtual ~GameState(){};
 };
 
+
+
+class StartState : public GameState
+{
+public:
+	//Static accessor
+	static StartState* get();
+
+	//Transitions
+	bool enter();
+	bool exit();
+
+	//Main loop functions
+	void handleEvent( SDL_Event& e );
+	void update();
+	void render();
+
+private:
+	//Static instance
+	static StartState sStartState;
+
+	//Private constructor
+	StartState();
+
+	//Intro background
+	LTexture mBackgroundTexture;
+};
+
+
+
 class IntroState : public GameState
 {
 public:
@@ -120,6 +150,58 @@ private:
 
 };
 
+class Bug1WinState : public GameState
+{
+public:
+	//Static accessor
+	static Bug1WinState* get();
+
+	//Transitions
+	bool enter();
+	bool exit();
+
+	//Main loop functions
+	void handleEvent( SDL_Event& e );
+	void update();
+	void render();
+
+private:
+	//Static instance
+	static Bug1WinState sBug1WinState;
+
+	//Private constructor
+	Bug1WinState();
+
+	//Intro background
+	LTexture mBackgroundTexture;
+};
+
+class Bug2WinState : public GameState
+{
+public:
+	//Static accessor
+	static Bug2WinState* get();
+
+	//Transitions
+	bool enter();
+	bool exit();
+
+	//Main loop functions
+	void handleEvent( SDL_Event& e );
+	void update();
+	void render();
+
+private:
+	//Static instance
+	static Bug2WinState sBug2WinState;
+
+	//Private constructor
+	Bug2WinState();
+
+	//Intro background
+	LTexture mBackgroundTexture;
+};
+
 class ExitState : public GameState
 {
 public:
@@ -207,16 +289,83 @@ TTF_Font* gFont = NULL;
 LTexture ScoreATexture;
 LTexture ScoreBTexture;
 //Scene textures
-LTexture gFooTexture;
 LTexture gBackgroundTexture;
+LTexture gBug1r;
+LTexture gBug1l;
+LTexture gBug2r;
+LTexture gBug2l;
 LTexture gPoop;
-LTexture gBug2;
-LTexture poop_bug;
-LTexture bug_poop;
+LTexture gBug1rp;
+LTexture gBug1lp;
+LTexture gBug2rp;
+LTexture gBug2lp;
 
 //Game state object
 GameState* gCurrentState = NULL;
 GameState* gNextState = NULL;
+
+StartState* StartState::get()
+{
+	//Get static instance
+	return &sStartState;
+}
+
+bool StartState::enter()
+{
+	//Loading success flag
+	bool success = true;
+
+	//Load background
+	if( !mBackgroundTexture.loadFromFile( "img/start.png" ) )
+	{
+		printf( "Failed to intro background!\n" );
+		success = false;
+	}
+
+
+	return success;
+}
+
+bool StartState::exit()
+{
+	//Free background and text
+	mBackgroundTexture.free();
+
+
+	return true;
+}
+
+
+void StartState::handleEvent( SDL_Event& e )
+{
+	//If the user pressed enter
+	if( ( e.type == SDL_KEYDOWN ) && ( e.key.keysym.sym == SDLK_RETURN ) )
+	{
+		//Move onto title state
+		setNextState( IntroState::get() );
+	}
+}
+
+void StartState::update()
+{
+
+}
+
+void StartState::render()
+{
+	//Show the background
+	mBackgroundTexture.render( 0, 0 );
+}
+
+StartState StartState::sStartState;
+
+StartState::StartState()
+{
+	//No public instantiation
+}
+
+
+
 
 IntroState* IntroState::get()
 {
@@ -356,7 +505,9 @@ bool OverWorldState::enter()
 		printf( "Failed to load overworld background!\n" );
 		success = false;
 	}
-
+	bug1.set();
+	poop.set();
+	bug2.set();
 
 	return success;
 }
@@ -374,6 +525,11 @@ void OverWorldState::handleEvent( SDL_Event& e )
 {
 	bug1.handleEvent(e);
 	bug2.handleEvent(e);
+	if (bug1.resetgoal()) {
+		setNextState(Bug1WinState::get());	
+	} else if (bug2.resetgoal()) {
+		setNextState(Bug2WinState::get());
+	}
 }
 
 void OverWorldState::update()
@@ -384,7 +540,9 @@ void OverWorldState::update()
 	poop.move();
 				//!
 	if (bug2.gotp() || bug1.gotp()) {
-		poop.discard();
+		if (count >= 10) {
+			poop.discard();
+		}
 	}
 	count += 1;
 }
@@ -411,6 +569,135 @@ OverWorldState::OverWorldState()
 	//No public instantiation
 }
 
+Bug1WinState* Bug1WinState::get()
+{
+	//Get static instance
+	return &sBug1WinState;
+}
+
+bool Bug1WinState::enter()
+{
+	//Loading success flag
+	bool success = true;
+
+	//Load background
+	if( !mBackgroundTexture.loadFromFile( "img/bug1win.png" ) )
+	{
+		printf( "Failed to intro background!\n" );
+		success = false;
+	}
+
+
+	return success;
+}
+
+bool Bug1WinState::exit()
+{
+	//Free background and text
+	mBackgroundTexture.free();
+
+
+	return true;
+}
+
+
+void Bug1WinState::handleEvent( SDL_Event& e )
+{
+	//If the user pressed enter
+	if( ( e.type == SDL_KEYDOWN ) && ( e.key.keysym.sym == SDLK_RETURN ) )
+	{
+		//Move onto title state
+		setNextState( OverWorldState::get() );
+	} 
+	if( ( e.type == SDL_KEYDOWN ) && ( e.key.keysym.sym == SDLK_ESCAPE ) )
+	{
+		//Move onto title state
+		setNextState( ExitState::get() );
+	}
+}
+
+void Bug1WinState::update()
+{
+
+}
+
+void Bug1WinState::render()
+{
+	//Show the background
+	mBackgroundTexture.render( 0, 0 );
+}
+
+Bug1WinState Bug1WinState::sBug1WinState;
+
+Bug1WinState::Bug1WinState()
+{
+	//No public instantiation
+}
+
+Bug2WinState* Bug2WinState::get()
+{
+	//Get static instance
+	return &sBug2WinState;
+}
+
+bool Bug2WinState::enter()
+{
+	//Loading success flag
+	bool success = true;
+
+	//Load background
+	if( !mBackgroundTexture.loadFromFile( "img/bug2win.png" ) )
+	{
+		printf( "Failed to intro background!\n" );
+		success = false;
+	}
+
+
+	return success;
+}
+
+bool Bug2WinState::exit()
+{
+	//Free background and text
+	mBackgroundTexture.free();
+
+
+	return true;
+}
+
+
+void Bug2WinState::handleEvent( SDL_Event& e )
+{
+	//If the user pressed enter
+	if( ( e.type == SDL_KEYDOWN ) && ( e.key.keysym.sym == SDLK_RETURN ) )
+	{
+		//Move onto title state
+		setNextState( OverWorldState::get() );
+	}
+	if( ( e.type == SDL_KEYDOWN ) && ( e.key.keysym.sym == SDLK_ESCAPE ) )
+	{
+		//Move onto title state
+		setNextState( ExitState::get() );
+	}
+}
+
+void Bug2WinState::update()
+{
+
+}
+
+void Bug2WinState::render()
+{
+	//Show the background
+	mBackgroundTexture.render( 0, 0 );
+}
+
+Bug2WinState Bug2WinState::sBug2WinState;
+
+Bug2WinState::Bug2WinState()
+{
+	//No public instantiation
+}
 
 //Hollow exit state
 ExitState* ExitState::get()
@@ -517,7 +804,7 @@ bool loadMedia()
 
 	bool success = true;
 
-	if( !gFooTexture.loadFromFile( "img/bug2.png" ) )
+	if( !gBug1l.loadFromFile( "img/bug1l.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
@@ -534,19 +821,41 @@ bool loadMedia()
 		success = false;
 	}
 	
-	if( !gBug2.loadFromFile( "img/bug3.png" ) )
+	if( !gBug1r.loadFromFile( "img/bug1r.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
-	//!
-	if (!poop_bug.loadFromFile("img/poop_bug.png"))
+	
+	if( !gBug2r.loadFromFile( "img/bug2r.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
 	}
-	//!
-	if (!bug_poop.loadFromFile("img/bug_poop.png"))
+	
+	if( !gBug2l.loadFromFile( "img/bug2l.png" ) )
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
+	if( !gBug1rp.loadFromFile( "img/bug1rp.png" ) )
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
+	
+	if( !gBug2rp.loadFromFile( "img/bug2rp.png" ) )
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
+	
+	if( !gBug2lp.loadFromFile( "img/bug2lp.png" ) )
+	{
+		printf( "Failed to load Foo' texture image!\n" );
+		success = false;
+	}
+	if( !gBug1lp.loadFromFile( "img/bug1lp.png" ) )
 	{
 		printf( "Failed to load Foo' texture image!\n" );
 		success = false;
@@ -571,11 +880,15 @@ bool loadMedia()
 void close()
 {
 	//Free loaded images
-	gFooTexture.free();
 	gBackgroundTexture.free();
-	gBug2.free();
-	gPoop.free();
-	poop_bug.free();
+	gBug2r.free();
+	gBug2l.free();
+	gBug1r.free();
+	gBug1l.free();
+	gBug2rp.free();
+	gBug2lp.free();
+	gBug1rp.free();
+	gBug1lp.free();
 	//Free loaded images
     ScoreATexture.free();
 
@@ -639,7 +952,7 @@ int main( int argc, char* args[] )
 			bool quit = false;
 			//Event handler
 			SDL_Event e;
-			gCurrentState = IntroState::get();
+			gCurrentState = StartState::get();
 			gCurrentState->enter();
 
 						while( gCurrentState != ExitState::get() )
