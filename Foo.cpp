@@ -9,7 +9,7 @@ Foo::Foo()
 {
     //Initialize the offsets
     mPosX = SCREEN_WIDTH - 100;
-    mPosY = 400;
+    mPosY = 350;
 	withPoop = false;
 	direction = false;
 	press_attack = false;
@@ -18,7 +18,7 @@ Foo::Foo()
 	conter_attack = false;
 	mCollider.w = FOO_WIDTH;
 	mCollider.h = FOO_HEIGHT;
-	
+	mScore =0;
     //Initialize the velocity
     mVelX = 0;
     mVelY = 0;
@@ -76,15 +76,15 @@ void Foo::handleEvent( SDL_Event& e )
     }
 }
 
-void Foo::move(const SDL_Rect& R, const SDL_Rect& Bug2)
+void Foo::move(const SDL_Rect& R, const SDL_Rect& Bug2, int count)
 {
       //MODIFIED below: 增加重力變數以及跳躍落下的判定 
 	int g=0;
    
-    if(mPosY<400&& jump_times==0){
+    if(mPosY<350&& jump_times==0){
     	g=3;
 	}
-	if(mPosY<300&& jump_times!=0){
+	if(mPosY<250&& jump_times!=0){
     	mVelY-=3;
     	jump_times--;
 	}
@@ -103,17 +103,24 @@ void Foo::move(const SDL_Rect& R, const SDL_Rect& Bug2)
 
     //If the dot went too far to the left or right
     
-    if( ( mPosX < 0 ) || ( mPosX + FOO_WIDTH > SCREEN_WIDTH ) )
+    if( mPosX < 0 ) 
     {
         //Move back
         mPosX -= mVelX;
-    } 
+    } else if( mPosX + FOO_WIDTH > SCREEN_WIDTH) {
+    	if (withPoop) {
+    		goal = true;
+    		withPoop = false;
+		} else {
+			mPosX -= mVelX;
+		}
+	}
     
-    if ( mPosY > 400) {
+    if ( mPosY > 350) {
     	mPosY += mVelY-1;
 	}
 		
-	if (SDL_HasIntersection(&R,&mCollider)) {
+	if (SDL_HasIntersection(&R,&mCollider) && count >= 10) {
 		withPoop = true;
 	}
 	if (SDL_HasIntersection(&Bug2,&mCollider)&&press_attack) {
@@ -140,9 +147,9 @@ void Foo::render(bool othergotp)
 			loss=false;
 		}		
 			if (direction) {
-			bug_poop.render( mPosX, mPosY );
+			gBug1rp.render( mPosX, mPosY );
 		} else {
-			poop_bug.render( mPosX, mPosY );
+			gBug1lp.render( mPosX, mPosY );
 		}
 
 	
@@ -158,9 +165,9 @@ void Foo::render(bool othergotp)
 			loss=false;
 		}
 		if (direction) {
-			gBug2.render( mPosX, mPosY );
+			gBug1r.render( mPosX, mPosY );
 		} else {
-			gFooTexture.render( mPosX, mPosY );
+			gBug1l.render( mPosX, mPosY );
 		}
 	}
 
@@ -170,4 +177,32 @@ bool Foo::gotp() {
 }
 SDL_Rect Foo::Collider() {
 	return mCollider;
+}
+
+int Foo::returnmScore() {
+	return mScore;
+}
+
+bool Foo::resetgoal() {
+	bool currentgoal = goal;
+	goal = false;
+	return currentgoal;
+	printf("end\n");
+}
+
+void Foo::set() {
+	mPosX = SCREEN_WIDTH - 100;
+    mPosY = 350;
+	withPoop = false;
+	direction = false;
+	press_attack = false;
+	hit = false;
+	jump_times = 0;
+	conter_attack = false;
+	mCollider.w = FOO_WIDTH;
+	mCollider.h = FOO_HEIGHT;
+	mScore =0;
+    //Initialize the velocity
+    mVelX = 0;
+    mVelY = 0;
 }
