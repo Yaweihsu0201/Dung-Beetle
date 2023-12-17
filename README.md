@@ -1,2 +1,3 @@
 # SDL-project
-you better not touch this shit
+Download game.zip to play the game (remember to unzip it)
+
