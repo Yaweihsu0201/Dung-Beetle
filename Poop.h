@@ -12,7 +12,6 @@ class Poop
     public:
 		static const int POOP_WIDTH = 20;
 		static const int POOP_HEIGHT = 20;
-
 		static const int POOP_VEL = 1;
 
 		Poop();
@@ -25,7 +24,7 @@ class Poop
 		//!
 		void discard();
 		
-		
+		void set();
 	
     private:
 		int mPosX, mPosY;
