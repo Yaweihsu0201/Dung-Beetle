@@ -2,10 +2,10 @@
 #define FOO_H
 
 #include "LTexture.h"
-extern LTexture gFooTexture;
-extern LTexture poop_bug;
-extern LTexture gBug2;
-extern LTexture bug_poop;
+extern LTexture gBug1r;
+extern LTexture gBug1l;
+extern LTexture gBug1rp;
+extern LTexture gBug1lp;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
@@ -25,14 +25,15 @@ class Foo
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot
-		void move(const SDL_Rect& , const SDL_Rect& );
-
+		void move(const SDL_Rect& , const SDL_Rect&, int );
 		//Shows the dot on the screen
 		void render(bool othergotp);
-		
 		bool gotp();
-		
 		SDL_Rect Collider();
+		int returnmScore();
+		bool resetgoal();
+		
+		void set();
 
     private:
 		//The X and Y offsets of the dot
@@ -44,8 +45,11 @@ class Foo
 		bool loss;
 		int jump_times;
 		bool conter_attack;
+		bool goal;
 		//The velocity of the dot
 		int mVelX, mVelY;
 		SDL_Rect mCollider;
+		int mScore;
+		
 };
 #endif
