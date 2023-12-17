@@ -2,10 +2,10 @@
 #define BUG2_H
 
 #include "LTexture.h"
-extern LTexture gFooTexture;
-extern LTexture poop_bug;
-extern LTexture gBug2;
-extern LTexture bug_poop;
+extern LTexture gBug2r;
+extern LTexture gBug2l;
+extern LTexture gBug2rp;
+extern LTexture gBug2lp;
 extern const int SCREEN_WIDTH;
 extern const int SCREEN_HEIGHT;
 
@@ -25,13 +25,16 @@ class Bug2
 		void handleEvent( SDL_Event& e );
 
 		//Moves the dot
-		void move(const SDL_Rect& R, const SDL_Rect& Bug2);
+		void move(const SDL_Rect& R, const SDL_Rect& Bug2,int);
 
 		//Shows the dot on the screen
 		void render(bool othergotp);
 		
 		SDL_Rect Collider();
 		bool gotp();
+		int returnmScore();
+		bool resetgoal();
+		void set();
 
     private:
 		//The X and Y offsets of the dot
@@ -44,8 +47,11 @@ class Bug2
 		bool loss;
 		int jumptimes;
 		bool conter_attack;
+		bool goal;
 		//The velocity of the dot
 		int mVelX, mVelY;
 		SDL_Rect mCollider;
+		int mScore;
+		
 };
 #endif
