@@ -14,6 +14,12 @@ Players control two beetles:
 - When carrying the poop, the beetle moves slower.
 - Players can attack or counterattack depending on whether they are holding the poop.
 
+## Demo
+
+### Full Gameplay Video
+[![Watch Demo](docs/demo.png)]
+(https://www.youtube.com/watch?v=dA7Iwm9VA5I)
+
 ## Features
 
 - 2-player local gameplay
